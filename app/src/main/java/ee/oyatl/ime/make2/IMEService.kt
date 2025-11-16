@@ -67,10 +67,12 @@ class IMEService: InputMethodService() {
 
     private val keyboardListener: KeyboardListener = object: KeyboardListener {
         override fun onKeyDown(codePoint: Int, keyCode: Int) {
+            shiftHandler.onKeyDown(codePoint, keyCode)
         }
 
         override fun onKeyUp(codePoint: Int, keyCode: Int) {
             val ic = currentInputConnection ?: return
+            shiftHandler.onKeyUp(codePoint, keyCode)
             if(codePoint != 0) {
                 ic.commitText(codePoint.toChar().toString(), 1)
                 return
@@ -86,6 +88,27 @@ class IMEService: InputMethodService() {
                     sendDefaultEditorAction(true)
                 }
             }
+        }
+    }
+
+    private val modifierStateListener: ModifierKeyHandler.Listener = object: ModifierKeyHandler.Listener {
+        override fun onModifierStateChanged(
+            keyCode: Int,
+            state: ModifierKeyHandler.ModifierState
+        ) {
+            if(state == ModifierKeyHandler.ModifierState.Released) {
+                keyboardView.style = DefaultKeyboardStyle(keyboardTheme)
+            } else if(state == ModifierKeyHandler.ModifierState.Pressed) {
+                keyboardView.style = DefaultKeyboardStyle(keyboardTheme.copy(keyboardBackground = Color.valueOf(Color.DKGRAY)))
+            } else {
+                keyboardView.style = DefaultKeyboardStyle(keyboardTheme.copy(keyboardBackground = Color.valueOf(Color.BLACK)))
+            }
+        }
+    }
+
+    private val shiftHandler = object: ModifierKeyHandler.DoubleTapToLock(300, modifierStateListener) {
+        override fun isModifier(codePoint: Int, keyCode: Int): Boolean {
+            return keyCode == KeyEvent.KEYCODE_SHIFT_LEFT || keyCode == KeyEvent.KEYCODE_SHIFT_RIGHT
         }
     }
 

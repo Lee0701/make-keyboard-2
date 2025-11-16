@@ -2,8 +2,6 @@ package ee.oyatl.ime.make2
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -12,8 +10,6 @@ class KeyboardView(
     context: Context,
     attrs: AttributeSet?
 ): View(context, attrs) {
-    val paint: Paint = Paint()
-
     var keyboard: Keyboard? = null
         set(v) {
             field = v
