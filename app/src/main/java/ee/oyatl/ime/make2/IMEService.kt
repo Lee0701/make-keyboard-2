@@ -1,5 +1,6 @@
 package ee.oyatl.ime.make2
 
+import android.graphics.Color
 import android.inputmethodservice.InputMethodService
 import android.view.KeyEvent
 import android.view.View
@@ -34,7 +35,7 @@ class IMEService: InputMethodService() {
             KeyboardTemplate.Spacer(0.5f)
         )),
         KeyboardTemplate.Row(listOf(
-            KeyboardTemplate.Spacer(1.5f),
+            KeyboardTemplate.Key(keyCode = KeyEvent.KEYCODE_SHIFT_LEFT, width = 1.5f),
             KeyboardTemplate.Key('z'.code),
             KeyboardTemplate.Key('x'.code),
             KeyboardTemplate.Key('c'.code),
@@ -42,7 +43,7 @@ class IMEService: InputMethodService() {
             KeyboardTemplate.Key('b'.code),
             KeyboardTemplate.Key('n'.code),
             KeyboardTemplate.Key('m'.code),
-            KeyboardTemplate.Spacer(1.5f)
+            KeyboardTemplate.Key(keyCode = KeyEvent.KEYCODE_DEL, width = 1.5f)
         )),
         KeyboardTemplate.Row(listOf(
             KeyboardTemplate.Spacer(3f),
@@ -50,6 +51,19 @@ class IMEService: InputMethodService() {
             KeyboardTemplate.Spacer(3f)
         ))
     ))
+
+    private val keyboardTheme: DefaultKeyboardStyle.Theme = DefaultKeyboardStyle.Theme(
+        keyboardBackground = Color.valueOf(0xffe8e8e8.toInt()),
+        alphabeticKeyBackground = Color.valueOf(Color.WHITE),
+        functionalKeyBackground = Color.valueOf(0xffd0d0d0.toInt()),
+        pressedKeyBackground = Color.valueOf(0xffc0c0c0.toInt()),
+        alphabeticKeyForeground = Color.valueOf(Color.BLACK),
+        functionalKeyForeground = Color.valueOf(Color.BLACK),
+        keyRadius = 20,
+        horizontalGap = 5,
+        verticalGap = 15,
+        keyTextSize = 60f
+    )
 
     private val keyboardListener: KeyboardListener = object: KeyboardListener {
         override fun onKeyDown(codePoint: Int, keyCode: Int) {
@@ -62,8 +76,14 @@ class IMEService: InputMethodService() {
                 return
             }
             when(keyCode) {
+                KeyEvent.KEYCODE_DEL -> {
+                    ic.deleteSurroundingText(1, 0)
+                }
                 KeyEvent.KEYCODE_SPACE -> {
                     ic.commitText(" ", 1)
+                }
+                KeyEvent.KEYCODE_ENTER -> {
+                    sendDefaultEditorAction(true)
                 }
             }
         }
@@ -73,10 +93,11 @@ class IMEService: InputMethodService() {
         super.onCreate()
         val params = Keyboard.Params(
             width = resources.displayMetrics.widthPixels,
-            height = 600
+            height = 700
         )
         keyboardView = KeyboardView(this, null)
         keyboardView.keyboard = Keyboard(template, params)
+        keyboardView.style = DefaultKeyboardStyle(keyboardTheme)
         keyboardView.listener = keyboardListener
     }
 

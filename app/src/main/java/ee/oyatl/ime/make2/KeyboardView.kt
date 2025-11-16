@@ -21,38 +21,18 @@ class KeyboardView(
             invalidate()
         }
 
+    var style: KeyboardStyle? = null
+
     var listener: KeyboardListener? = null
 
     private val pointers: MutableMap<Int, TouchPointer> = mutableMapOf()
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        // Fill background
-        canvas.drawColor(Color.LTGRAY)
+        style?.drawBackground(canvas)
         // Draw all keys
         keyboard?.keys?.forEach { key ->
-            // Pressed key background color
-            if(key.pressed) paint.color = Color.DKGRAY
-            // Unpressed key background color
-            else paint.color = Color.WHITE
-            // Draw key background
-            canvas.drawRect(key.rect, paint)
-
-            // If the key has a text label, draw it
-            if(key.label != null) {
-                // Set label text color, size, and alignment
-                paint.color = Color.BLACK
-                paint.textSize = key.rect.height() / 3f
-                paint.textAlign = Paint.Align.CENTER
-                // Set the text anchor
-                // Anchor X on the key center
-                val x = key.rect.centerX().toFloat()
-                // Anchor Y on the key center,
-                // offset by half text height
-                val y = key.rect.centerY() - ((paint.descent() + paint.ascent()) / 2)
-                // Draw key text label
-                canvas.drawText(key.label, x, y, paint)
-            }
+            style?.drawKey(canvas, key)
         }
     }
 
