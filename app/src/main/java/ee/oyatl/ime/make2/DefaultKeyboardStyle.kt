@@ -1,7 +1,6 @@
 package ee.oyatl.ime.make2
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.view.KeyEvent
@@ -16,7 +15,7 @@ class DefaultKeyboardStyle(
 
     override fun drawBackground(canvas: Canvas) {
         // Fill keyboard background
-        canvas.drawColor(theme.keyboardBackground.toArgb())
+        canvas.drawColor(theme.keyboardBackground)
     }
 
     override fun drawKey(canvas: Canvas, key: Keyboard.Key) {
@@ -26,11 +25,11 @@ class DefaultKeyboardStyle(
 
     private fun drawKeyBackground(canvas: Canvas, key: Keyboard.Key) {
         // Pressed key background color
-        if(key.pressed) paint.color = theme.pressedKeyBackground.toArgb()
+        if(key.pressed) paint.color = theme.pressedKeyBackground
         // Functional key background color
-        else if(isFunctionalKey(key)) paint.color = theme.functionalKeyBackground.toArgb()
+        else if(isFunctionalKey(key)) paint.color = theme.functionalKeyBackground
         // Default unpressed key background color
-        else paint.color = theme.alphabeticKeyBackground.toArgb()
+        else paint.color = theme.alphabeticKeyBackground
 
         rect.set(key.rect)
         rect.inset(theme.horizontalGap, theme.verticalGap)
@@ -44,8 +43,8 @@ class DefaultKeyboardStyle(
         // If the key has a text label, draw it
         if(key.label != null) {
             // Set label text color by key type
-            if(isFunctionalKey(key)) paint.color = theme.functionalKeyForeground.toArgb()
-            else paint.color = theme.alphabeticKeyForeground.toArgb()
+            if(isFunctionalKey(key)) paint.color = theme.functionalKeyForeground
+            else paint.color = theme.alphabeticKeyForeground
 
             // Set text size and align
             paint.textSize = theme.keyTextSize
@@ -74,12 +73,12 @@ class DefaultKeyboardStyle(
     }
 
     data class Theme(
-        val keyboardBackground: Color,
-        val alphabeticKeyBackground: Color,
-        val functionalKeyBackground: Color,
-        val pressedKeyBackground: Color,
-        val alphabeticKeyForeground: Color,
-        val functionalKeyForeground: Color,
+        val keyboardBackground: Int,
+        val alphabeticKeyBackground: Int,
+        val functionalKeyBackground: Int,
+        val pressedKeyBackground: Int,
+        val alphabeticKeyForeground: Int,
+        val functionalKeyForeground: Int,
         val keyRadius: Int,
         val horizontalGap: Int,
         val verticalGap: Int,

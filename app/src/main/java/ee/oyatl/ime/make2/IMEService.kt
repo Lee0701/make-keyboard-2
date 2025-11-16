@@ -40,12 +40,12 @@ class IMEService: InputMethodService() {
     }
 
     private val keyboardTheme: DefaultKeyboardStyle.Theme = DefaultKeyboardStyle.Theme(
-        keyboardBackground = Color.valueOf(0xffe8e8e8.toInt()),
-        alphabeticKeyBackground = Color.valueOf(Color.WHITE),
-        functionalKeyBackground = Color.valueOf(0xffd0d0d0.toInt()),
-        pressedKeyBackground = Color.valueOf(0xffc0c0c0.toInt()),
-        alphabeticKeyForeground = Color.valueOf(Color.BLACK),
-        functionalKeyForeground = Color.valueOf(Color.BLACK),
+        keyboardBackground = 0xffe8e8e8.toInt(),
+        alphabeticKeyBackground = Color.WHITE,
+        functionalKeyBackground = 0xffd0d0d0.toInt(),
+        pressedKeyBackground = 0xffc0c0c0.toInt(),
+        alphabeticKeyForeground = Color.BLACK,
+        functionalKeyForeground = Color.BLACK,
         keyRadius = 20,
         horizontalGap = 5,
         verticalGap = 15,
