@@ -9,7 +9,7 @@ import android.view.View
 class KeyboardView(
     context: Context,
     attrs: AttributeSet?
-): View(context, attrs) {
+): View(context, attrs), KeyboardMotionHandler.Listener {
     var keyboard: Keyboard? = null
         set(v) {
             field = v
@@ -17,11 +17,15 @@ class KeyboardView(
             invalidate()
         }
 
+    var motionHandler: KeyboardMotionHandler? = null
+        set(v) {
+            field = v
+            v?.listener = this
+        }
+
     var style: KeyboardStyle? = null
 
     var listener: KeyboardListener? = null
-
-    private val pointers: MutableMap<Int, TouchPointer> = mutableMapOf()
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -47,45 +51,17 @@ class KeyboardView(
         val x = event.getX(pointerIndex).toInt()
         val y = event.getY(pointerIndex).toInt()
         // Get unique ID for the touch pointer
-        val id = event.getPointerId(pointerIndex)
-        // Get a key under the touch pointer, if any
-        val key = keyboard?.findKey(x, y)
+        val pointerId = event.getPointerId(pointerIndex)
 
-        // TODO: Make the touch behaviour set modular, so that any type of touch keyboard could be implemented.
-        // TODO: ex. Swipe input, Flick input, Flick combo
         when(event.actionMasked) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
-                // Add the new pointer to the list
-                val pointer = TouchPointer(x, y, key)
-                pointers += id to pointer
-                // If a key was found
-                if(key != null) {
-                    // Make it look pressed
-                    key.pressed = true
-                    // Send key down callback
-                    listener?.onKeyDown(key.codePoint, key.keyCode)
-                }
+                motionHandler?.onTouchDown(pointerId, x, y)
             }
             MotionEvent.ACTION_MOVE -> {
-                // Find current pointer by ID, if exists
-                val pointer = pointers[id] ?: return true
-                // Update pointer position
-                pointer.x = x
-                pointer.y = y
+                motionHandler?.onTouchMove(pointerId, x, y)
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
-                // Find current pointer if exists
-                val pointer = pointers[id]
-                val key = pointer?.key
-                // If the pointer exists with an associated key on keyboard
-                if(key != null) {
-                    // Make the key look released
-                    key.pressed = false
-                    // Send key up callback
-                    listener?.onKeyUp(key.codePoint, key.keyCode)
-                }
-                // Remove released pointer from the list
-                pointers -= id
+                motionHandler?.onTouchUp(pointerId, x, y)
             }
             else -> return super.onTouchEvent(event)
         }
@@ -94,9 +70,9 @@ class KeyboardView(
         return true
     }
 
-    class TouchPointer(
-        var x: Int,
-        var y: Int,
-        var key: Keyboard.Key?
-    )
+    override val keyboardListener: KeyboardListener?
+        get() = listener
+
+    override fun getKeyAt(x: Int, y: Int): Keyboard.Key? = keyboard?.findKey(x, y)
+
 }

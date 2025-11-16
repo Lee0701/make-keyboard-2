@@ -97,7 +97,7 @@ class IMEService: InputMethodService() {
         }
     }
 
-    private val shiftHandler = object: ModifierKeyHandler.DoubleTapToLock(300, modifierStateListener) {
+    private val shiftHandler = object: DoubleTapToLockModifierHandler(300, modifierStateListener) {
         override fun isModifier(codePoint: Int, keyCode: Int): Boolean {
             return keyCode == KeyEvent.KEYCODE_SHIFT_LEFT || keyCode == KeyEvent.KEYCODE_SHIFT_RIGHT
         }
@@ -116,6 +116,7 @@ class IMEService: InputMethodService() {
         this.keyboards = keyboards
         keyboardView = KeyboardView(this, null)
         keyboardView.keyboard = keyboards[0]
+        keyboardView.motionHandler = SweepMotionHandler()
         keyboardView.style = DefaultKeyboardStyle(keyboardTheme)
         keyboardView.listener = keyboardListener
     }
