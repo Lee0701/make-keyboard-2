@@ -77,7 +77,7 @@ class KeyboardView(
                 pointer.x = x
                 pointer.y = y
             }
-            MotionEvent.ACTION_UP -> {
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
                 // Find current pointer if exists
                 val pointer = pointers[id]
                 val key = pointer?.key
