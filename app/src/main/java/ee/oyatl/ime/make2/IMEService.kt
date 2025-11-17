@@ -6,8 +6,8 @@ import android.view.KeyEvent
 import android.view.View
 
 class IMEService: InputMethodService() {
-    lateinit var keyboardView: KeyboardView
-    lateinit var keyboards: List<Keyboard>
+    var keyboardView: KeyboardView? = null
+    var keyboards: List<Keyboard> = listOf()
 
     private val layout = listOf(
         "qwertyuiop",
@@ -86,17 +86,7 @@ class IMEService: InputMethodService() {
             keyCode: Int,
             state: ModifierKeyHandler.ModifierState
         ) {
-            when (state) {
-                ModifierKeyHandler.ModifierState.Released -> {
-                    keyboardView.keyboard = keyboards[0]
-                }
-                ModifierKeyHandler.ModifierState.Pressed -> {
-                    keyboardView.keyboard = keyboards[1]
-                }
-                ModifierKeyHandler.ModifierState.Locked -> {
-                    keyboardView.keyboard = keyboards[2]
-                }
-            }
+            keyboardView?.keyboard = keyboards[state.ordinal]
         }
     }
 
@@ -121,14 +111,15 @@ class IMEService: InputMethodService() {
         keyboards[1].setShiftState(on = true, locked = false)
         keyboards[2].setShiftState(on = true, locked = true)
         this.keyboards = keyboards
-        keyboardView = KeyboardView(this, null)
-        keyboardView.keyboard = keyboards[0]
-        keyboardView.motionHandler = SweepMotionHandler()
-        keyboardView.style = DefaultKeyboardStyle(this, keyboardTheme)
-        keyboardView.listener = keyboardListener
     }
 
     override fun onCreateInputView(): View {
+        val keyboardView = KeyboardView(this, null)
+        keyboardView.keyboard = keyboards.getOrNull(0)
+        keyboardView.motionHandler = SweepMotionHandler()
+        keyboardView.style = DefaultKeyboardStyle(this, keyboardTheme)
+        keyboardView.listener = keyboardListener
+        this.keyboardView = keyboardView
         return keyboardView
     }
 }

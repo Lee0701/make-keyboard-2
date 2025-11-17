@@ -22,7 +22,7 @@ interface ModifierKeyHandler {
     fun onNonModifierUp(codePoint: Int, keyCode: Int)
 
     enum class ModifierState {
-        Pressed, Released, Locked
+        Released, Pressed, Locked
     }
 
     interface Listener {
