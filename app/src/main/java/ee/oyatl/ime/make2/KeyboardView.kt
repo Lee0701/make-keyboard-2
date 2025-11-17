@@ -73,6 +73,6 @@ class KeyboardView(
     override val keyboardListener: KeyboardListener?
         get() = listener
 
-    override fun getKeyAt(x: Int, y: Int): Keyboard.Key? = keyboard?.findKey(x, y)
+    override fun getKeyAt(x: Int, y: Int): Keyboard.Key? = keyboard?.findKeyAt(x, y)
 
 }

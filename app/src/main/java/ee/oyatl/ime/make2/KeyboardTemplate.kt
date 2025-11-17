@@ -20,6 +20,7 @@ data class KeyboardTemplate(
         val codePoint: Int = 0,
         val label: String? = codePoint.toChar().toString(),
         val keyCode: Int = 0,
-        override val width: Float = 1f
+        override val width: Float = 1f,
+        val isModifier: Boolean = false
     ): Item
 }

@@ -27,29 +27,32 @@ class IMEService: InputMethodService() {
                 KeyboardTemplate.Spacer(0.5f)
             )),
             KeyboardTemplate.Row(listOf(
-                KeyboardTemplate.Key(keyCode = KeyEvent.KEYCODE_SHIFT_LEFT, width = 1.5f),
+                KeyboardTemplate.Key(keyCode = KeyEvent.KEYCODE_SHIFT_LEFT, width = 1.5f, isModifier = true),
                 *rows[2],
-                KeyboardTemplate.Key(keyCode = KeyEvent.KEYCODE_DEL, width = 1.5f)
+                KeyboardTemplate.Key(keyCode = KeyEvent.KEYCODE_DEL, width = 1.5f, isModifier = true)
             )),
             KeyboardTemplate.Row(listOf(
-                KeyboardTemplate.Spacer(3f),
+                KeyboardTemplate.Key(keyCode = KeyEvent.KEYCODE_SYM, width = 1.5f, isModifier = true),
+                KeyboardTemplate.Key(codePoint = ','.code, isModifier = true),
+                KeyboardTemplate.Key(keyCode = KeyEvent.KEYCODE_LANGUAGE_SWITCH),
                 KeyboardTemplate.Key(keyCode = KeyEvent.KEYCODE_SPACE, width = 4f),
-                KeyboardTemplate.Spacer(3f)
+                KeyboardTemplate.Key(codePoint = '.'.code, isModifier = true),
+                KeyboardTemplate.Key(keyCode = KeyEvent.KEYCODE_ENTER, width = 1.5f, isModifier = true)
             ))
         ))
     }
 
     private val keyboardTheme: DefaultKeyboardStyle.Theme = DefaultKeyboardStyle.Theme(
+        keyRadius = 20,
+        horizontalGap = 5,
+        verticalGap = 15,
+        keyTextSize = 60f,
         keyboardBackground = 0xffe8e8e8.toInt(),
         alphabeticKeyBackground = Color.WHITE,
         functionalKeyBackground = 0xffd0d0d0.toInt(),
         pressedKeyBackground = 0xffc0c0c0.toInt(),
         alphabeticKeyForeground = Color.BLACK,
-        functionalKeyForeground = Color.BLACK,
-        keyRadius = 20,
-        horizontalGap = 5,
-        verticalGap = 15,
-        keyTextSize = 60f
+        functionalKeyForeground = Color.BLACK
     )
 
     private val keyboardListener: KeyboardListener = object: KeyboardListener {
@@ -91,7 +94,7 @@ class IMEService: InputMethodService() {
                     keyboardView.keyboard = keyboards[1]
                 }
                 ModifierKeyHandler.ModifierState.Locked -> {
-                    keyboardView.keyboard = keyboards[1]
+                    keyboardView.keyboard = keyboards[2]
                 }
             }
         }
@@ -111,13 +114,17 @@ class IMEService: InputMethodService() {
         )
         val keyboards = listOf(
             Keyboard(buildTemplate(layout), params),
+            Keyboard(buildTemplate(layout.map { it.uppercase() }), params),
             Keyboard(buildTemplate(layout.map { it.uppercase() }), params)
         )
+        keyboards[0].setShiftState(on = false, locked = false)
+        keyboards[1].setShiftState(on = true, locked = false)
+        keyboards[2].setShiftState(on = true, locked = true)
         this.keyboards = keyboards
         keyboardView = KeyboardView(this, null)
         keyboardView.keyboard = keyboards[0]
         keyboardView.motionHandler = SweepMotionHandler()
-        keyboardView.style = DefaultKeyboardStyle(keyboardTheme)
+        keyboardView.style = DefaultKeyboardStyle(this, keyboardTheme)
         keyboardView.listener = keyboardListener
     }
 
