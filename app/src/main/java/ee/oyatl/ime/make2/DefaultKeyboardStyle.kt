@@ -38,12 +38,7 @@ class DefaultKeyboardStyle(
         canvas.drawColor(theme.keyboardBackground)
     }
 
-    override fun drawKey(canvas: Canvas, key: Keyboard.Key) {
-        drawKeyBackground(canvas, key)
-        drawKeyForeground(canvas, key)
-    }
-
-    private fun drawKeyBackground(canvas: Canvas, key: Keyboard.Key) {
+    override fun drawKeyBackground(canvas: Canvas, key: Keyboard.Key) {
         // Pressed key background color
         if(key.pressed) paint.color = theme.pressedKeyBackground
         // Functional key background color
@@ -59,7 +54,7 @@ class DefaultKeyboardStyle(
         canvas.drawRoundRect(rect.toRectF(), radius, radius, paint)
     }
 
-    private fun drawKeyForeground(canvas: Canvas, key: Keyboard.Key) {
+    override fun drawKeyForeground(canvas: Canvas, key: Keyboard.Key) {
         // Set foreground color by key type
         val color =
             if(key.isModifier) theme.functionalKeyForeground

@@ -30,9 +30,13 @@ class KeyboardView(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         style?.drawBackground(canvas)
-        // Draw all keys
+        // Draw all key backgrounds
         keyboard?.keys?.forEach { key ->
-            style?.drawKey(canvas, key)
+            style?.drawKeyBackground(canvas, key)
+        }
+        // Draw all key foregrounds
+        keyboard?.keys?.forEach { key ->
+            style?.drawKeyForeground(canvas, key)
         }
     }
 
